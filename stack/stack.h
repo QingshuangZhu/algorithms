@@ -40,15 +40,15 @@ typedef struct {
     stackNode *bottom;
     int height;   /* 栈的高度 */
 } linkedStack;
-int initStack2(linkedStack **s);
-int destroyStack2(linkedStack **s);
+int initStack2(linkedStack *s);
+int destroyStack2(linkedStack *s);
 int clearStack2(linkedStack *s);
 int stackEmpty2(linkedStack *s);
 int stackHeight2(linkedStack *s);
 int top2(linkedStack *s, dataType *data);
 int push2(linkedStack *s, dataType data);
 int pop2(linkedStack *s, dataType *data);
-void stackTraverse2(linkedStack *s);
+void stackTraverse2(linkedStack s);
 
 #ifdef __cplusplus
 }

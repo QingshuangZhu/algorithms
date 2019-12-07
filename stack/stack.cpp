@@ -47,7 +47,7 @@ int stackEmpty(sqStack *s) {
     }
 }
 
-/* stack的高度 */
+/* stack 高度 */
 int stackHeight(sqStack *s) {
     return s->top - s->bottom;
 }
@@ -99,25 +99,25 @@ void stackTraverse(sqStack *s) {
 }
 
 
-int initStack2(linkedStack **s) {
-    *s = (linkedStack*)malloc(sizeof(linkedStack));
-    if(NULL == *s){
+int initStack2(linkedStack *s) {
+    stackNode *rear = (stackNode*)malloc(sizeof(stackNode));    /* 产生尾结点 */
+    if(NULL == rear){
         return 0;
     }
-    (*s)->top = (*s)->bottom = NULL;
-    (*s)->height = 0;
+    s->top = s->bottom = rear;
+    rear->next = NULL;
+    s->height = 0;
     return 1;
 }
 
-int destroyStack2(linkedStack **s) {
-    if((*s)->top != (*s)->bottom){
-        stackNode *tmp = (*s)->top;
-        (*s)->top = (*s)->top->next;
-        free(tmp);
-        tmp = NULL;
+int destroyStack2(linkedStack *s) {
+    while(NULL != s->top){
+        s->bottom = s->top;
+        s->top = s->top->next;
+        free(s->bottom);
+        s->bottom = NULL;
     }
-    free(*s);
-    *s = NULL;
+    s->height = 0;
     return 1;
 }
 
@@ -128,13 +128,12 @@ int clearStack2(linkedStack *s) {
         free(tmp);
         tmp = NULL;
     }
-    s->top = s->bottom = NULL;
     s->height = 0;
     return 1;
 }
 
 int stackEmpty2(linkedStack *s) {
-    if(NULL == s->top && NULL == s->bottom){
+    if(s->top == s->bottom){
         return 1;
     }
     return 0;
@@ -145,7 +144,7 @@ int stackHeight2(linkedStack *s){
 }
 
 int top2(linkedStack *s, dataType *data) {
-    if(stackEmpty2(s)){
+    if(s->top == s->bottom){
         return 0;
     }
     *data = s->top->data;
@@ -157,13 +156,6 @@ int push2(linkedStack *s, dataType data) {
     if(NULL == tmp){
         return 0;
     }
-    if(stackEmpty2(s)){
-        tmp->data = data;
-        s->bottom = s->top = tmp;    /* 空栈栈底和栈顶指向第一个元素 */
-        tmp->next = NULL;           /* 第一个元素的指向空 */
-        s->height++;
-        return 1;
-    }
 
     tmp->data = data;
     tmp->next = s->top;
@@ -173,15 +165,8 @@ int push2(linkedStack *s, dataType data) {
 }
 
 int pop2(linkedStack *s, dataType *data) {
-    if(stackEmpty2(s)) {
+    if(s->top == s->bottom) {
         return 0;
-    }
-
-    if(s->top == s->bottom){    /* 最后一个元素 */
-        *data = s->top->data;
-        free(s->top);
-        s->bottom = s->top = NULL;
-        s->height = 0;
     }
 
     stackNode *tmp = s->top;
@@ -193,12 +178,9 @@ int pop2(linkedStack *s, dataType *data) {
     return 1;
 }
 
-void stackTraverse2(linkedStack *s) {
-    if(stackEmpty2(s)){
-        return;
-    }
-    stackNode *top = s->top;
-    while(NULL != top){
+void stackTraverse2(linkedStack s) {
+    stackNode *top = s.top;
+    while(top != s.bottom){
         printf("%d\n", top->data);
         top = top->next;
     }
