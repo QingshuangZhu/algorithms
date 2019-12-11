@@ -13,7 +13,46 @@
 * 深度（depth）：树中结点的最大层次称为树的深度或高度。
 * 有序树（ordered tree）：将树中结点的各子树看成从左到右是有次序的，则称该树为有序树；否则称为无序树（unorder tree）。
 * 森林（forest）：是m（m>=0）棵互不相交的树的集合。
-
+* 存储结构：有多种形式的存储结构来表示树，其中双亲表示法、孩子表示法、孩子兄弟表示法。
+1. 双亲表示法：以一组连续空间存储树的结点，同时在每个结点中附设一个指示器指示其双亲结点在表中的位置。
+```
+/* 树的双亲表存储表示 */
+typedef struct pTNode {    /* 结点结构 */
+    dataType data;
+    int parent;            /* 双亲位置域 */
+}pTNode;
+typedef struct {           /* 树结构 */
+    pTNode nodes[MAX_TREE_SIZE];
+    int r;                 /* 根的位置 */
+    int n;                 /* 结点数 */
+}pTree;
+```
+2. 孩子表示法：把每个结点的孩子结点排列起来，看成一个线性表，且以单链表作存储结构，则n个结点有n个孩子链表（叶子的孩子链表尾空表）。而n个头指针又组成一个线性表。
+```
+* 树的孩子链表存储表示 */
+typedef struct cTNode {    /* 孩子结点 */
+    int child;             /* 孩子位置域 */
+    struct cTNode *next;
+}child;
+typedef struct {
+    dataType data;
+    child *firstChild;     /* 孩子链表头指针 */
+}cTBox;
+typedef struct {
+    cTBox nodes[MAX_TREE_SIZE];
+    int r;                 /* 根的位置 */
+    int n;                 /* 结点数 */
+}cTree;
+```
+3. 孩子兄弟表示法：又称二叉树表示法，或者二叉链表表示法。即以二叉链表作树的存储结构。链表中结点的两个链域分别指向该结点的第一孩子结点和下一个兄弟结点。
+```
+/* 树的二叉链表（孩子-兄弟）存储表示 */
+typedef struct cSNode {
+    dataType data;
+    struct cSNode *firstChild;
+    struct cSNode *nextSibling;
+}cSNode, *cSTree;
+```
 
 ### B-树（balance tree）
 B-树是一种平衡的多路查找树，一个m阶的B-树具有如下几个特征：
@@ -49,6 +88,15 @@ B+树是基于B-树的一种变体，有着比B-树更高的查询性能。一�
 * 存储结构：有顺序存储和链式存储两种。
 1. 顺序存储结构：用一组地址连续的存储单元依次自上而下、自左至右存储完全二叉树上的结点元素，即将完全二叉树上编号为i的结点元素存储在一维数组中下标为i-1的分量中。
 2. 链式存储结构：二叉链表由数据域和左、右指针域；在含有n个结点的二叉链表中有n+1个空链域。三叉链表由数据域和左、右指针域及指向其双向亲的指针域。
+```
+typedef char dataType;
+/* linked storage structure */
+typedef struct biTNode {
+    dataType data;
+    struct biTNode *lChild;
+    struct biTNode *rChild;
+} biTNode, *linkedBiTree;
+```
 
 ### 满二叉树（full binary tree）
 一个深度为k且有(2^k)-1个结点的二叉树称为满二叉树。深度为k的，有n个结点的二叉树，当且仅当其每个结点都与深度为k的满二叉树中编号从1至n个结点一一对应时，称为完全二叉树（complete binary tree）。
@@ -89,5 +137,3 @@ B+树是基于B-树的一种变体，有着比B-树更高的查询性能。一�
 
 ## 回溯法
 回溯（backtracking）法也是设计递归过程的一个重要的方法，它的求解过程实质上是一个先序遍历一颗“状态树”的过程，只是这颗树不是遍历前预先建立的，而时隐含在遍历过程中。然而很多问题用回溯和试探求解时，描述求解过程的状态树不是一颗满的多叉树。当试探过程中出现的状态和问题所求解产生矛盾时，不再继续试探下去，这时出现的叶子结点不是问题的解的终结状态。这类问题求解过程可看成时在约束条件下进行先序遍历，并在遍历过程中剪去那些不满足条件的分支。
-
-
