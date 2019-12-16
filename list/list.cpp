@@ -1,5 +1,5 @@
 /*
- * linear list
+ * list
  */
 
 #include "list.h"

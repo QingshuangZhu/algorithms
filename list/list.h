@@ -1,5 +1,5 @@
 /*
- * linear list
+ * list
  */
 
 #ifndef LIST_H
