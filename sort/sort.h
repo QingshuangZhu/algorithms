@@ -8,6 +8,9 @@ extern "C" {
 void bubbleSort(int array[], int length);
 void bubbleSort2(int array[], int length);
 void cocktail(int array[], int length);
+void quickSort(int array[], int left, int right);
+void quickSort2(int array[], int left, int right);
+void quickSort3(int array[], int left, int right);
 
 #ifdef __cplusplus
 }
