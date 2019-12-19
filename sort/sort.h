@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+void insertionSort(int array[], int length);
+void binaryInsertionSort(int array[], int length);
+
 void bubbleSort(int array[], int length);
 void bubbleSort2(int array[], int length);
 void cocktail(int array[], int length);
