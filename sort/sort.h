@@ -19,6 +19,9 @@ void quickSort3(int array[], int left, int right);
 void selectionSort(int array[], int length);
 void heapSort(int array[], int length);
 
+void mergeSort(int array[], int tmp[], int start, int end);
+void mergeSort2(int array[], int tmp[], int start, int end);
+
 #ifdef __cplusplus
 }
 #endif
