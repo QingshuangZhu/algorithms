@@ -335,3 +335,75 @@ void listTraverse2(sqList list) {
         printf("%d\n", list.base[i]);
     }
 }
+
+/* 一趟归并排序 */
+linkedList merge(linkedList left, linkedList right) {
+    linkedList lr = NULL;
+    linkedList freeHead = NULL;     /* free头结点 */
+    if(listEmpty(left)){
+        return right;
+    }
+    if(listEmpty(right)){
+        return left;
+    }
+    if(left->next->data < right->next->data){
+        lr = left;
+        freeHead = right;
+    }else{
+        lr = right;
+        freeHead = left;
+    }
+    linkedList tmp = lr;
+    left = left->next;
+    right = right->next;
+    tmp->next = NULL;
+
+    while(left && right){
+        if(left->data < right->data){
+            tmp->next = left;
+            left = left->next;
+            tmp = tmp->next;
+            tmp->next = NULL;
+        }else{
+            tmp->next = right;
+            right = right->next;
+            tmp = tmp->next;
+            tmp->next = NULL;
+        }
+    }
+
+    if(NULL != left){
+        tmp->next = left;
+    }
+    if(NULL != right){
+        tmp->next = right;
+    }
+
+    free(freeHead);
+    return lr;
+}
+
+/* 链表排序 */
+linkedList listSort(linkedList list) {
+    if(listEmpty(list)){
+        return NULL;
+    }
+    if(NULL == list->next->next){
+        return list;
+    }
+
+    linkedList slow = list;
+    linkedList fast = list;
+    while(NULL != fast && NULL != fast->next){
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+
+    linkedList head = (linkedList)malloc(sizeof(lNode));   /* 添加头节点 */
+    head->next = slow->next;
+    slow->next = NULL;                                     /* 在slow结点处拆分为两个链表 */
+    linkedList left = listSort(list);
+    linkedList right = listSort(head);
+    linkedList lr = merge(left, right);
+    return lr;
+}

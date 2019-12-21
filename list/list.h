@@ -30,6 +30,7 @@ int listDelete(linkedList list, int pos, dataType *data);
 int listAttach(linkedList list1, linkedList list2, linkedList *list3);
 int listReverse(linkedList list);
 void listTraverse(linkedList list);
+linkedList listSort(linkedList list);
 
 /* sequential storage structure */
 typedef struct {
