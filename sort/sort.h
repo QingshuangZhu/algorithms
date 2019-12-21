@@ -22,6 +22,8 @@ void heapSort(int array[], int length);
 void mergeSort(int array[], int tmp[], int start, int end);
 void mergeSort2(int array[], int tmp[], int start, int end);
 
+void countSort(int array[], int sortedArray[], int length);
+
 #ifdef __cplusplus
 }
 #endif
