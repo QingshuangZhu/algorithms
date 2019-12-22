@@ -26,6 +26,8 @@ void countSort(int array[], int sortedArray[], int length);
 
 void bucketSort(int array[], int length);
 
+void radixSort(int array[], int length);
+
 #ifdef __cplusplus
 }
 #endif
