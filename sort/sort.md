@@ -36,4 +36,98 @@
 * 最高位优先（most significant digit first）：先对主关键字进行排序，将序列分成若干子序列，每个子序列中的记录都具有相同的关键字；然后依次对每个次关键字重复上述操作；最后将所有子序列连接在一起成为一个有序的序列。
 * 最低位优先（least significant digit first）：先对次关键字进行排序，将序列分成若干子序列，每个子序列中的记录都具有相同的关键字；然后依次对每个次关键字重复上述操作；最后将所有子序列连接在一起成为一个有序的序列。
 
+<table border="2">
+    <tr>
+        <td colspan="2">排序方法</td>
+        <td>平均时间</td>
+        <td>最好时间</td>
+        <td>最坏时间</td>
+        <td>空间复杂度</td>
+        <td>稳定性</td>
+    </tr>
+    <tr>
+        <td rowspan="2">插入排序</td>
+        <td>直接插入排序</td>
+        <td>O(n^2)</td>
+        <td>O(n)</td>
+        <td>O(n^2)</td>
+        <td>O(1)</td>
+        <td>稳定</td>
+    </tr>
+    <tr>
+        <td>希尔排序</td>
+        <td>O(nlogn)</td>
+        <td>O(n(logn)^2)</td>
+        <td>O(n(logn)^2)</td>
+        <td>O(1)</td>
+        <td>不稳定</td>
+    </tr>
+    <tr>
+        <td rowspan="2">交换排序</td>
+        <td>冒泡排序</td>
+        <td>O(n^2)</td>
+        <td>O(n)</td>
+        <td>O(n^2)</td>
+        <td>O(1)</td>
+        <td>稳定</td>
+    </tr>
+    <tr>
+        <td>快速排序</td>
+        <td>O(nlogn)</td>
+        <td>O(nlogn)</td>
+        <td>O(n^2)</td>
+        <td>O(logn)</td>
+        <td>不稳定</td>
+    </tr>
+    <tr>
+        <td rowspan="2">选择排序</td>
+        <td>简单选择排序</td>
+        <td>O(n^2)</td>
+        <td>O(n^2)</td>
+        <td>O(n^2)</td>
+        <td>O(1)</td>
+        <td>不稳定</td>
+    </tr>
+    <tr>
+        <td>堆排序</td>
+        <td>O(nlogn)</td>
+        <td>O(nlogn)</td>
+        <td>O(nlogn)</td>
+        <td>O(1)</td>
+        <td>不稳定</td>
+    </tr>
+    <tr>
+        <td colspan="2">归并排序</td>
+        <td>O(nlogn)</td>
+        <td>O(nlogn)</td>
+        <td>O(nlogn)</td>
+        <td>O(n)</td>
+        <td>稳定</td>
+    </tr>
+    <tr>
+        <td colspan="2">计数排序</td>
+        <td>O(n+k)</td>
+        <td>O(n+k)</td>
+        <td>O(n+k)</td>
+        <td>O(k)</td>
+        <td>稳定</td>
+    </tr>
+    <tr>
+        <td colspan="2">桶排序</td>
+        <td>O(n+k)</td>
+        <td>O(n+k)</td>
+        <td>O(n^2)</td>
+        <td>O(n+k)</td>
+        <td>稳定</td>
+    </tr>
+    <tr>
+        <td colspan="2">基数排序</td>
+        <td>O(n*k)</td>
+        <td>O(n*k)</td>
+        <td>O(n*k)</td>
+        <td>O(n+k)</td>
+        <td>稳定</td>
+    </tr>
+</table>
+
 ## 外部排序
