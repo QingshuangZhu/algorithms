@@ -102,7 +102,8 @@ void preOrderTraverse(linkedBiTree t) {
 void preOrderTraverse2(linkedBiTree t) {
     std::stack<linkedBiTree> s;
     linkedBiTree p = t;
-
+    
+    /* 先自上而下访问左侧链上的节点,再自下而上访问它们的右子树*/
     while(p || !s.empty()){
         if(p){    /* 根指针进栈，访问根节点，遍历左子树 */
             s.push(p);
