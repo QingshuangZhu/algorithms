@@ -124,7 +124,7 @@ typed struct {
 
 2. 广度优先搜索（Breadth First Search, BFS）：类似于树的按层次遍历的过程。基本思路：从图中的某顶点V出发，在访问了V之后依次访问V的各个未曾访问过的邻接点；然后分别从这些邻接点出发依次访问它们的邻接点，并使“先被访问的顶点的邻接点”先于“后被访问的顶点的邻接点”被访问；直至图中所有已被访问的顶点的邻接点都被访问到。若此时图中尚有顶点未被访问，则另选图中一个未曾被访问的顶点作起始点，重复上述过程，直至图中所有顶点都被访问到为止。在BFS遍历生成的BFS树/BFS森林中，每个顶点和S点（起始点）之间那条通路（由树边组成的通路），恰好就是在原图中这两个顶点之间的最短通路。
 
-图遍历的过程实质上是通过边或弧查找其邻接点的过程。因此深度优先和广度优先遍历图的时间复杂的相同，两者的不同之处仅仅在于对顶点访问的顺序不同。时间复杂度均为O(n+e)。在遍历图时图的顶点状态分为{UNDISCOVERED, DISCOVERED, VISITED}，及顶点时间标签dTime（顶点被发现时刻）和fTime（顶点被访问完毕时刻）；顶点的活动期：active[u] = (dTime[u], fTime[u])。括号引理（parenthesis lemma）：给定有向图G = (V, E)及其任一DFS森林，则u是v的后代，iff active[u] ⊆ active[v]，u是v的祖先，iff active[u] ⊇ active[v]（即祖先的活动期必然包含后代的活动期）；u与v“无关”，iff active[u] ∩ active[v] = Ø（即若两个顶点没有任何直系血缘关系，则它们的活动期也是彼此互不相交的）。
+图遍历的过程实质上是通过边或弧查找其邻接点的过程。因此深度优先和广度优先遍历图的时间复杂的相同，两者的不同之处仅仅在于对顶点访问的顺序不同。时间复杂度均为O(n+e)。在遍历图时图的顶点状态分为{UNDISCOVERED, DISCOVERED, VISITED}，及顶点时间标签dTime（顶点被发现时刻）和fTime（顶点被访问完毕时刻）；顶点的活动期：active[u] = (dTime[u], fTime[u])。括号引理（parenthesis lemma）：给定有向图G = (V, E)及其任一DFS森林，则u是v的后代，iff active[u] ⊆ active[v]；u是v的祖先，iff active[u] ⊇ active[v]（即祖先的活动期必然包含后代的活动期）；u与v“无关”，iff active[u] ∩ active[v] = Ø（即若两个顶点没有任何直系血缘关系，则它们的活动期也是彼此互不相交的）。
 边状态分为{UNDETERMINED, TREE, CROSS, FORWARD, BACKWARD}；一但出现BACKWARD边意味着存在至少一条回路。
 
 ### 有向无环图
