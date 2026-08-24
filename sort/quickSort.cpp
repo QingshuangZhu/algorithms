@@ -7,14 +7,14 @@
 
  /* 双边循环法 */
 void quickSort(int array[], int left, int right) {
-    int pivot = array[left];    /* 基准元素 */
-    int l = left;
-    int r = right;
-
     /* 递归结束条件 */
     if(left >= right){
         return;
     }
+
+    int pivot = array[left];    /* 基准元素 */
+    int l = left;
+    int r = right;
     
     /* 一次快排：分为大于pivot和小于pivot两部分 */
     while(left < right){
@@ -38,13 +38,13 @@ void quickSort(int array[], int left, int right) {
 
 /* 单边循环法 */
 void quickSort2(int array[], int left, int right) {
-    int pivot = array[left];     /* 基准元素 */
-    int mark = left;             /* 小于pivot元素的边界 */
-
     /* 递归结束条件 */
     if(left >= right){
         return;
     }
+
+    int pivot = array[left];     /* 基准元素 */
+    int mark = left;             /* 小于pivot元素的边界 */
 
     /* 一次快排：分为大于pivot和小于pivot两部分 */
     for(int i = left+1; i <= right; i++){
@@ -64,7 +64,7 @@ void quickSort2(int array[], int left, int right) {
 }
 
 /* 非递归实现：把原本的递归实现转化成一个栈的实现，在栈中存储每次方法调用的参数 */
-int partition(int array[], int left, int right) {
+static int partition(int array[], int left, int right) {
     int pivot = array[left];
     int mark = left;
 
@@ -81,6 +81,10 @@ int partition(int array[], int left, int right) {
     return mark;
 }
 void quickSort3(int array[], int left, int right) {
+    if(left >= right){
+        return;
+    }
+
     std::stack<int> s;
     s.push(left);
     s.push(right);

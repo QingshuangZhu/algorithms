@@ -5,7 +5,7 @@
 #include "sort.h"
 
 /* 一次希尔插入排序 */
-void shellInsert(int array[], int length, int d) {
+static void shellInsert(int array[], int length, int d) {
     for(int i = d; i < length; i++){
         int insertValue = array[i];
         int j = i - d;

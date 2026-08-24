@@ -8,7 +8,7 @@
      for(int i = 1; i < length; i++){
          int insertValue = array[i];
          int j = i - 1;
-         for(; insertValue < array[j]; j--){
+         for(; j >= 0 && insertValue < array[j]; j--){
              array[j+1] = array[j];
          }
          array[j+1] = insertValue;

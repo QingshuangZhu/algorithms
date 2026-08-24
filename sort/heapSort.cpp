@@ -5,9 +5,9 @@
 #include "sort.h"
 
 /* 向下调整 */
-void downAdjust(int array[], int length, int index) {
+static void downAdjust(int array[], int length, int index) {
     int tmp = array[index];    /* 父结点的值 */
-    int childIndex = 2*index + 1;
+    long long childIndex = 2LL*index + 1;
 
     while(childIndex < length){
         /* 如果有右孩子，且右孩子大于左孩子，则定位到右孩子 */
@@ -21,8 +21,8 @@ void downAdjust(int array[], int length, int index) {
         }
 
         array[index] = array[childIndex];
-        index = childIndex;
-        childIndex = 2*index + 1;
+        index = (int)childIndex;
+        childIndex = 2LL*index + 1;
     }
     array[index] = tmp;
 }

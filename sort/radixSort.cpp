@@ -3,39 +3,39 @@
  */
 
 #include "sort.h"
+#include <stdint.h>
 #include <stdlib.h>
-#include <math.h>
 
 void radixSort(int array[], int length) {
+    if(NULL == array || length <= 1){
+        return;
+    }
+
     int max = array[0];
 
-    /* 数列中最大的值 */
+    /* 数列中最大的值；该实现仅接受非负整数 */
     for(int i = 0; i < length; i++){
+        if(array[i] < 0){
+            return;
+        }
         if(max < array[i]){
             max = array[i];
         }
     }
 
-    /* 最大值的位数 */
-    int count = 0;
-    do
-    {
-        count++;
-        max /=10; 
-    } while (0 != max);
-
-    //int (*bucket)[10] = (int (*)[10])malloc(count * 10 * sizeof(int));
-
+    if((size_t)length > SIZE_MAX/sizeof(int)){
+        return;
+    }
     int *sortedArray = (int*)malloc(length * sizeof(int));
+    if(NULL == sortedArray){
+        return;
+    }
 
-    for(int i = 0; i < count; i++){    /* 一次LSD，即一次计数排序 */
-
+    for(unsigned int radix = 1; ; radix *= 10){    /* 一次LSD，即一次计数排序 */
         /* 创建桶，并统计相应元素个数 */
         int bucket[10] = {0};
-        int radix = pow(10, i);    /* 基数 */
         for(int j = 0; j < length; j++){
-            
-            int index = (array[j] / radix) % 10;
+            unsigned int index = ((unsigned int)array[j] / radix) % 10;
             bucket[index]++;
         }
 
@@ -47,7 +47,7 @@ void radixSort(int array[], int length) {
 
         /* 倒序遍历原始数组，从统计数组找到正确位置，输出到排序后数组 */
         for(int j = length - 1; j >= 0; j--){
-            int index = (array[j] / radix) % 10;
+            unsigned int index = ((unsigned int)array[j] / radix) % 10;
             sortedArray[bucket[index] - 1] = array[j];
             bucket[index]--;
         }
@@ -56,7 +56,10 @@ void radixSort(int array[], int length) {
         for(int j = 0; j < length; j++){
             array[j] = sortedArray[j];
         }
+
+        if(radix > (unsigned int)max/10){
+            break;
+        }
     }
     free(sortedArray);
-    sortedArray = NULL;
 }

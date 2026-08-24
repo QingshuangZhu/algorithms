@@ -5,7 +5,7 @@
 #include "sort.h"
 
 /* 一趟归并操作 */
-void merge(int array[], int tmp[], int start, int mid, int end) {
+static void merge(int array[], int tmp[], int start, int mid, int end) {
     int i = start;        /* 左边有序序列第一个位置的下标 */
     int j = mid + 1;      /* 右边有序序列第一个位置的下标 */
     int k = start;        /* 合并后有序序列第一个位置的下标 */
@@ -44,22 +44,18 @@ void mergeSort(int array[], int tmp[], int start, int end) {
 
 /* 非递归实现 */
 void mergeSort2(int array[], int tmp[], int start, int end) {
-    int length = 1;    /* 初始左右子序列长度 */
-    int s, m, e;
-    
-    while(length < (end - start + 1)/2){
-        for(int i = start; i <= end; i += 2*length){
-            s = i;
-            e = s + 2*length - 1;
-            if(e > end){
-                e = end;
+    const long long total = (long long)end - start + 1;
+
+    for(long long length = 1; length < total; length *= 2){
+        for(long long offset = 0; offset < total; offset += 2*length){
+            int s = start + (int)offset;
+            int m = start + (int)(offset + length - 1);
+            if(m >= end){
+                continue;
             }
-            m = s + length - 1;
-            if(m > end){
-                m = end;
-            }
+            long long last = offset + 2*length - 1;
+            int e = last < total ? start + (int)last : end;
             merge(array, tmp, s, m, e);
         }
-        length *=2;
     }
 }
