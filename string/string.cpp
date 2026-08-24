@@ -2,10 +2,26 @@
  * pattern matching
  */
 
-#include<stdlib.h>
+#include "patternMatching.h"
+
+#include <stdint.h>
+#include <stdlib.h>
 
 /* brute force */
-int bruteForce1(char *P, int m, char *T, int n){
+int bruteForce1(const char *P, int m, const char *T, int n){
+    if(m < 0 || n < 0){
+        return -1;
+    }
+    if((m > 0 && NULL == P) || (n > 0 && NULL == T)){
+        return -1;
+    }
+    if(0 == m){
+        return 0;
+    }
+    if(m > n){
+        return -1;
+    }
+
     int i = 0;
     int j = 0;
 
@@ -23,10 +39,23 @@ int bruteForce1(char *P, int m, char *T, int n){
         }
     }
 
-    return i-j; 
+    return j == m ? i-j : -1;
 }
 
-int bruteForce2(char *P, int m, char *T, int n){
+int bruteForce2(const char *P, int m, const char *T, int n){
+    if(m < 0 || n < 0){
+        return -1;
+    }
+    if((m > 0 && NULL == P) || (n > 0 && NULL == T)){
+        return -1;
+    }
+    if(0 == m){
+        return 0;
+    }
+    if(m > n){
+        return -1;
+    }
+
     int i = 0;
     int j = 0;
 
@@ -38,13 +67,20 @@ int bruteForce2(char *P, int m, char *T, int n){
         if(m <= j)
             break;
     }
-    return i;
+    return i <= n-m ? i : -1;
 }
 
 /* KMP */
-int* next(char *P, int m){
+static int *buildNext(const char *P, int m){
+    if((size_t)m > SIZE_MAX/sizeof(int)){
+        return NULL;
+    }
+
     int j = 0;                   /* "主"串指针 */
-    int *N = (int*)malloc(m);    /* next表 */
+    int *N = (int*)malloc((size_t)m*sizeof(int));    /* next表 */
+    if(NULL == N){
+        return NULL;
+    }
     int t = N[0] = -1;           /* 模式串指针（P[-1]通配符）*/
 
     while(j < m-1){
@@ -66,8 +102,24 @@ int* next(char *P, int m){
     return N;
 }
 
-int KMP(char *P, int m, char *T, int n){
-    int *next = next(P, m);    /* 构造next表 */
+int KMP(const char *P, int m, const char *T, int n){
+    if(m < 0 || n < 0){
+        return -1;
+    }
+    if((m > 0 && NULL == P) || (n > 0 && NULL == T)){
+        return -1;
+    }
+    if(0 == m){
+        return 0;
+    }
+    if(m > n){
+        return -1;
+    }
+
+    int *nextTable = buildNext(P, m);    /* 构造next表 */
+    if(NULL == nextTable){
+        return -1;
+    }
     int i = 0;                 /* 文本串指针 */
     int j = 0;                 /* 模式串指针 */
 
@@ -78,10 +130,10 @@ int KMP(char *P, int m, char *T, int n){
         }
         /* 否则，P右移，T不回退 */
         else{
-            j = next[j];
+            j = nextTable[j];
         }
     }
 
-    free(next);
-    return i-j;
+    free(nextTable);
+    return j == m ? i-j : -1;
 }
