@@ -20,12 +20,17 @@ typedef struct {
     int rear;
 } sqQueue;
 
+/*
+ * The usable capacity is MAXQSIZE - 1. Status functions return 1 on success
+ * and 0 on failure. getCHead/deCQueue require a non-NULL output pointer and
+ * leave it unchanged for an empty queue. destroyCQueue is safe to repeat.
+ */
 int initCQueue(sqQueue *cQueue);
 int destroyCQueue(sqQueue *cQueue);
 int clearCQueue(sqQueue *cQueue);
 int cQueueEmpty(sqQueue *cQueue);
 int cQueueLength(sqQueue *cQueue);
-int getHead(sqQueue *cQueue, dataType *data);
+int getCHead(sqQueue *cQueue, dataType *data);
 int enCQueue(sqQueue *cQueue, dataType data);
 int deCQueue(sqQueue *cQueue, dataType *data);
 void cQueueTraverse(sqQueue cQueue);

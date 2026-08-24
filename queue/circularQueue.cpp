@@ -9,6 +9,9 @@
 
 /* 初始化 circular queue */
 int initCQueue(sqQueue *cQueue) {
+    if(NULL == cQueue){
+        return 0;
+    }
     dataType *tmp = (dataType*)malloc(MAXQSIZE*sizeof(dataType));
     if(NULL == tmp){
         return 0;
@@ -20,6 +23,9 @@ int initCQueue(sqQueue *cQueue) {
 
 /* 销毁 circular queue */
 int destroyCQueue(sqQueue *cQueue) {
+    if(NULL == cQueue){
+        return 0;
+    }
     if(NULL != cQueue->base){
         free(cQueue->base);
         cQueue->base = NULL;
@@ -30,6 +36,9 @@ int destroyCQueue(sqQueue *cQueue) {
 
 /* 清空 circular queue */
 int clearCQueue(sqQueue *cQueue) {
+    if(NULL == cQueue){
+        return 0;
+    }
     if(NULL != cQueue->base){
         memset(cQueue->base, 0, MAXQSIZE*sizeof(dataType));
     }
@@ -39,7 +48,8 @@ int clearCQueue(sqQueue *cQueue) {
 
 /* circular queue 是否为空 */
 int cQueueEmpty(sqQueue *cQueue) {
-    if (cQueue->front == cQueue->rear){
+    if(NULL == cQueue || NULL == cQueue->base ||
+       cQueue->front == cQueue->rear){
         return 1;
     }
     return 0;
@@ -47,12 +57,16 @@ int cQueueEmpty(sqQueue *cQueue) {
 
 /* circular queue 长度 */
 int cQueueLength(sqQueue *cQueue) {
+    if(NULL == cQueue || NULL == cQueue->base){
+        return 0;
+    }
     return (cQueue->rear - cQueue->front + MAXQSIZE) % MAXQSIZE;
 }
 
 /* 获取队头元素 */
-int getHead(sqQueue *cQueue, dataType *data) {
-    if(cQueue->front == cQueue->rear) {
+int getCHead(sqQueue *cQueue, dataType *data) {
+    if(NULL == cQueue || NULL == data || NULL == cQueue->base ||
+       cQueue->front == cQueue->rear) {
         return 0;
     }
 
@@ -62,6 +76,9 @@ int getHead(sqQueue *cQueue, dataType *data) {
 
 /* 入队 */
 int enCQueue(sqQueue *cQueue, dataType data) {
+    if(NULL == cQueue || NULL == cQueue->base){
+        return 0;
+    }
     /* 队尾指针的下一位置是队头指针则表示队列已满，会少用一个元素空间 */
     if((cQueue->rear + 1) % MAXQSIZE == cQueue->front){
         return 0;
@@ -73,7 +90,8 @@ int enCQueue(sqQueue *cQueue, dataType data) {
 
 /* 出队 */
 int deCQueue(sqQueue *cQueue, dataType *data) {
-    if(cQueue->front == cQueue->rear){
+    if(NULL == cQueue || NULL == data || NULL == cQueue->base ||
+       cQueue->front == cQueue->rear){
         return 0;
     }
     *data = cQueue->base[cQueue->front];
@@ -83,6 +101,9 @@ int deCQueue(sqQueue *cQueue, dataType *data) {
 
 /* 遍历队列 */
 void cQueueTraverse(sqQueue cQueue) {
+    if(NULL == cQueue.base){
+        return;
+    }
     int index = cQueue.front;
     while(index != cQueue.rear){
         printf("%d\n", cQueue.base[index]);

@@ -20,6 +20,12 @@ typedef struct {
     dataType *bottom;
     int size;   /* 当前分配的空间大小 */
 } sqStack;
+/*
+ * Status functions return 1 on success and 0 on failure. top/pop require a
+ * non-NULL output pointer and leave it unchanged for an empty stack. If push
+ * cannot grow the allocation, the existing stack and all elements remain
+ * unchanged. Empty/height queries return 1/0 for NULL or destroyed stacks.
+ */
 int initStack(sqStack *s);
 int destroyStack(sqStack *s);
 int clearStack(sqStack *s);
@@ -40,6 +46,10 @@ typedef struct {
     stackNode *bottom;
     int height;   /* 栈的高度 */
 } linkedStack;
+/*
+ * bottom is a sentinel node; clearStack2 retains it for subsequent reuse.
+ * Empty/height queries return 1/0 for NULL or destroyed stacks.
+ */
 int initStack2(linkedStack *s);
 int destroyStack2(linkedStack *s);
 int clearStack2(linkedStack *s);

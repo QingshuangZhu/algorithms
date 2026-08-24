@@ -8,6 +8,9 @@
 
 /* 初始化 queue */
 int initQueue(linkedQueue *q) {
+    if(NULL == q){
+        return 0;
+    }
     qNode *head = (qNode*)malloc(sizeof(qNode));    /* 产生头结点 */
     if(NULL == head){
         return 0;
@@ -16,10 +19,14 @@ int initQueue(linkedQueue *q) {
     q->front = q->rear = head;
     head->next = NULL;
     q->length = 0;
+    return 1;
 }
 
 /* 销毁 queue */
 int destroyQueue(linkedQueue *q) {
+    if(NULL == q){
+        return 0;
+    }
     while(NULL != q->front){
         q->rear = q->front;
         q->front = q->front->next;
@@ -32,6 +39,9 @@ int destroyQueue(linkedQueue *q) {
 
 /* 清空 queue */
 int clearQueue(linkedQueue *q) {
+    if(NULL == q || NULL == q->front){
+        return 0;
+    }
     while(NULL != q->front->next) {
         q->rear = q->front->next;
         q->front->next = q->front->next->next;
@@ -45,7 +55,7 @@ int clearQueue(linkedQueue *q) {
 
 /* queue 是否为空 */
 int queueEmpty(linkedQueue *q) {
-    if(q->front == q->rear) {
+    if(NULL == q || NULL == q->front || q->front == q->rear) {
         return 1;
     }
     return 0;
@@ -53,12 +63,15 @@ int queueEmpty(linkedQueue *q) {
 
 /* queue 长度 */
 int queueLength(linkedQueue *q) {
+    if(NULL == q){
+        return 0;
+    }
     return q->length;
 }
 
 /* 获取队头元素 */
 int getHead(linkedQueue *q, dataType *data) {
-    if(q->front == q->rear){
+    if(NULL == q || NULL == data || NULL == q->front || q->front == q->rear){
         return 0;
     }
     *data = q->front->next->data;
@@ -67,6 +80,9 @@ int getHead(linkedQueue *q, dataType *data) {
 
 /* 入队 */
 int enQueue(linkedQueue *q, dataType data) {
+    if(NULL == q || NULL == q->rear){
+        return 0;
+    }
     qNode *newNode = (qNode*)malloc(sizeof(qNode));
     if(NULL == newNode){
         return 0;
@@ -82,7 +98,7 @@ int enQueue(linkedQueue *q, dataType data) {
 
 /* 出队 */
 int deQueue(linkedQueue *q, dataType *data) {
-    if(q->front == q->rear){
+    if(NULL == q || NULL == data || NULL == q->front || q->front == q->rear){
         return 0;
     }
     

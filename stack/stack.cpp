@@ -3,12 +3,17 @@
  */
 
 #include "stack.h"
+#include <limits.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 /* 初始化 stack */
 int initStack(sqStack *s) {
+    if(NULL == s){
+        return 0;
+    }
     s->bottom = (dataType*)malloc(STACK_INIT_SIZE*sizeof(dataType));
     if(NULL == s->bottom)
     {
@@ -21,6 +26,9 @@ int initStack(sqStack *s) {
 
 /* 销毁 stack */
 int destroyStack(sqStack *s) {
+    if(NULL == s){
+        return 0;
+    }
     if (NULL != s->bottom){
         free(s->bottom);
         s->bottom = s->top = NULL;
@@ -31,6 +39,9 @@ int destroyStack(sqStack *s) {
 
 /* 清空 stack */
 int clearStack(sqStack *s) {
+    if(NULL == s){
+        return 0;
+    }
     if(NULL != s->bottom) {
         memset(s->bottom, 0, s->size * sizeof(dataType));
     }
@@ -40,7 +51,8 @@ int clearStack(sqStack *s) {
 
 /* stack 是否为空 */
 int stackEmpty(sqStack *s) {
-    if(s->top == s->bottom) {
+    if(NULL == s || NULL == s->top || NULL == s->bottom ||
+       s->top == s->bottom) {
         return 1;
     }else{
         return 0;
@@ -49,12 +61,15 @@ int stackEmpty(sqStack *s) {
 
 /* stack 高度 */
 int stackHeight(sqStack *s) {
+    if(NULL == s || NULL == s->top || NULL == s->bottom){
+        return 0;
+    }
     return s->top - s->bottom;
 }
 
 /* 获取栈顶元素 */
 int top(sqStack *s, dataType *data) {
-    if( s->top == s->bottom){
+    if(NULL == s || NULL == data || s->top == s->bottom){
         return 0;
     }
     *data = *(s->top - 1);
@@ -63,13 +78,27 @@ int top(sqStack *s, dataType *data) {
 
 /* 入栈 */
 int push(sqStack *s, dataType data) {
-    if(stackHeight(s) >= s->size){  /* 栈满 */
-        s->bottom = (dataType*)realloc(s->bottom, (s->size+STACK_INCREMENT)*sizeof(dataType));
-        if(NULL == s->bottom){
+    if(NULL == s || NULL == s->bottom || NULL == s->top){
+        return 0;
+    }
+
+    int height = stackHeight(s);
+    if(height >= s->size){  /* 栈满 */
+        if(s->size > INT_MAX - STACK_INCREMENT){
             return 0;
         }
-        s->top = s->bottom + s->size;
-        s->size += STACK_INCREMENT;
+        int newSize = s->size + STACK_INCREMENT;
+        if((size_t)newSize > SIZE_MAX/sizeof(dataType)){
+            return 0;
+        }
+        dataType *newBottom = (dataType*)realloc(
+            s->bottom, (size_t)newSize * sizeof(dataType));
+        if(NULL == newBottom){
+            return 0;
+        }
+        s->bottom = newBottom;
+        s->top = newBottom + height;
+        s->size = newSize;
     }
     *s->top = data;
     s->top++;
@@ -78,7 +107,7 @@ int push(sqStack *s, dataType data) {
 
 /* 出栈 */
 int pop(sqStack *s, dataType *data) {
-    if(s->top == s->bottom){
+    if(NULL == s || NULL == data || s->top == s->bottom){
         return 0;
     }
     *data = *(--s->top);
@@ -100,6 +129,9 @@ void stackTraverse(sqStack *s) {
 
 
 int initStack2(linkedStack *s) {
+    if(NULL == s){
+        return 0;
+    }
     stackNode *rear = (stackNode*)malloc(sizeof(stackNode));    /* 产生尾结点 */
     if(NULL == rear){
         return 0;
@@ -111,6 +143,9 @@ int initStack2(linkedStack *s) {
 }
 
 int destroyStack2(linkedStack *s) {
+    if(NULL == s){
+        return 0;
+    }
     while(NULL != s->top){
         s->bottom = s->top;
         s->top = s->top->next;
@@ -122,7 +157,10 @@ int destroyStack2(linkedStack *s) {
 }
 
 int clearStack2(linkedStack *s) {
-    if(s->top != s->bottom){
+    if(NULL == s || NULL == s->bottom){
+        return 0;
+    }
+    while(s->top != s->bottom){
         stackNode *tmp = s->top;
         s->top = s->top->next;
         free(tmp);
@@ -133,18 +171,22 @@ int clearStack2(linkedStack *s) {
 }
 
 int stackEmpty2(linkedStack *s) {
-    if(s->top == s->bottom){
+    if(NULL == s || NULL == s->top || NULL == s->bottom ||
+       s->top == s->bottom){
         return 1;
     }
     return 0;
 }
 
 int stackHeight2(linkedStack *s){
+    if(NULL == s){
+        return 0;
+    }
     return s->height;
 }
 
 int top2(linkedStack *s, dataType *data) {
-    if(s->top == s->bottom){
+    if(NULL == s || NULL == data || s->top == s->bottom){
         return 0;
     }
     *data = s->top->data;
@@ -152,6 +194,9 @@ int top2(linkedStack *s, dataType *data) {
 }
 
 int push2(linkedStack *s, dataType data) {
+    if(NULL == s || NULL == s->top || NULL == s->bottom){
+        return 0;
+    }
     stackNode *tmp = (stackNode*)malloc(sizeof(stackNode));
     if(NULL == tmp){
         return 0;
@@ -165,7 +210,7 @@ int push2(linkedStack *s, dataType data) {
 }
 
 int pop2(linkedStack *s, dataType *data) {
-    if(s->top == s->bottom) {
+    if(NULL == s || NULL == data || s->top == s->bottom) {
         return 0;
     }
 

@@ -22,6 +22,11 @@ typedef struct {
     int length;    /* 队列长度 */
 } linkedQueue;
 
+/*
+ * initQueue creates the sentinel node. Status functions return 1 on success
+ * and 0 on failure. getHead/deQueue require a non-NULL output pointer and do
+ * not modify it when the queue is empty. destroyQueue is safe to repeat.
+ */
 int initQueue(linkedQueue *q);
 int destroyQueue(linkedQueue *q);
 int clearQueue(linkedQueue *q);
