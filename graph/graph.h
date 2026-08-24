@@ -33,6 +33,7 @@ typedef struct {
     graphKind kind;                     /* 图的种类标志 */
 }aLGraph;
 
+/* Interface-only: these operations are declared for study and have no implementation. */
 int createGraph(aLGraph **g);
 int destroyGraph(aLGraph **g);
 int locateVex(aLGraph *g, vexNode *v);

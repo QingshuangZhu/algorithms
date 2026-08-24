@@ -1,22 +1,25 @@
 # Graph
 
+> Status: interface-only。`graph.h` 提供邻接表数据结构和操作声明，仓库当前没有图算法实现；本文其余内容为学习笔记。
+
+
 ## [图（graph）](https://mp.weixin.qq.com/s?__biz=MzIxMjE5MTE1Nw==&mid=2653197523&idx=2&sn=893c01a31446d3c479c312836ae83819&chksm=8c99e609bbee6f1fb0df2fb60edb8fba5166b49ef200ab8fb3af4ff144b3f96b283a34ff776c&scene=21#wechat_redirect)
 图中结点之间的关系可以任意的，任意两个数据元素之间都可能相关。二元组定义：图G = (V, VR)，其中V是顶点（vertex）的非空集合，VR是两个顶点之间的关系的集合。
-* 有向图（digraph）：若<v, w> ∈ VR，则<v, w>表示从v到w的一条弧（arc），且称v为弧尾（tail)或初始点（initial node），称w为弧头（head)或终端点（terminal node），此时的图称为有向图。
+* 有向图（directed graph）：若(v, w) ∈ VR，则(v, w)表示从v到w的一条弧（arc），且称v为弧尾（tail）或初始点（initial node），称w为弧头（head）或终端点（terminal node），此时的图称为有向图。
 
-* 无向图（undigraph）：若<v, w> ∈ VR必有<w, v> ∈ VR，即VR是对称的，则以无序对（v, w)代替这两个有序对，表示v和w之间的一条边（edge），此时的图称为无向图。
+* 无向图（undirected graph）：若(v, w) ∈ VR必有(w, v) ∈ VR，即VR是对称的，则以无序对{v, w}代替这两个有序对，表示v和w之间的一条边（edge），此时的图称为无向图。
 
-* 完全图（completed graph）：有n(n-1)/2条边的无向图称为无向完全图；有n(n-1)条弧的有向图称为有向完全图。
+* 完全图（complete graph）：有n(n-1)/2条边的无向图称为无向完全图；同时含每一对不同顶点的两个方向、共n(n-1)条弧的简单有向图称为有向完全图。
 
 * 稀疏图（sparse graph）：有很少条边或弧的图称为稀疏图，反之称为稠密图。
 
 * 网（network）：带权的图称为网。图的边或弧具有与它相关的数叫做权（weight）。
 
-* 邻接点（adjacent）：对于无向图一条边的两个顶点互为邻接点；对于有向图一条弧的弧尾邻接到弧头，弧头邻接自弧弧。
+* 邻接点（adjacent）：对于无向图，一条边的两个顶点互为邻接点；对于有向图的一条弧，弧尾邻接到弧头，弧头邻接自弧尾。
 
 * 度（degree）：对于无向图顶点的度是和该顶点相关的边数；对于有向图顶点的度为该顶点的入度与出度的和，入度是以该顶点为头的弧的数目，出度是以该顶点为尾的弧的数目。
 
-* 路径（path）：对于无向图的路径是一个顶点序列；有向图的路径是有向的顶点序列。路径的长度时路径上的边或弧的数目。
+* 路径（path）：对于无向图的路径是一个顶点序列；有向图的路径是遵循弧方向的顶点序列。无权图中路径长度是路径上的边或弧的数目；带权图还可讨论路径的权值和。
 
 * 环（cycle）：第一个顶点和最后一个顶点相同的路径称为环或回路。
 
@@ -38,7 +41,7 @@ typedef struct arcCell {
     VRType adj;    /* VRType是顶点关系类型。对于无权图，用1或0表示是否相邻；对于带权图，则为权值类型*/
     infoType *info;    /* 该弧/边相关信息的指针 */
 }arcCell, adjMatrix[MAX_VERTEX_NUM][MAX_VERTEX_NUM];
-type struct {
+typedef struct {
     vertexType vexs[MAX_VERTEX_NUM];    /* 顶点向量 */
     adjMatrix arcs;    /* 邻接矩阵 */
     int vexNum;    /* 图的顶点数 */
@@ -102,7 +105,7 @@ typedef struct edgeNode {
     int iVex;    /* 依附的顶点i */
     struct edgeNode *iLink;    /* 依附顶点i的下一条边的指针 */
     int jVex;   /* 依附的顶点j */
-    struct edgeNode jLink;    /* 依附顶点j的下一条边的指针 */
+    struct edgeNode *jLink;    /* 依附顶点j的下一条边的指针 */
     infoType *info;    /* 该边相关信息的指针 */
 }edgeNode;
 /*表头结点（顶点） */
@@ -110,30 +113,32 @@ typedef struct vexNode {
     vertexType data;
     edgeNode *firstEdge;    /* 指向第一条依附该顶点的边 */
 }vexNode;
-typed struct {
+typedef struct {
     vexNode adjMulist[MAX_VERTEX_NUM];   /* 表头向量 */
     int vexNum;    /* 图的顶点数 */
     int edgeNum;    /* 图的边数 */
 }aMlGraph;
 ```
 
+邻接矩阵需要Θ(n²)存储；邻接表对有向图需要Θ(n+e)存储，无向图通常为每条边保存两个邻接表结点，渐近空间仍为Θ(n+e)。
+
 ### [图的遍历](https://mp.weixin.qq.com/s?__biz=MzIxMjE5MTE1Nw==&mid=2653197523&idx=1&sn=4edecca7392534177eef521511ff740b&chksm=8c99e609bbee6f1fdb736f1bc45da5f6b6765ce190db68eac5a65ca22cc2694dc151f8db828f&scene=21#wechat_redirect)
 图的遍历（traversing graph）:从图中某一顶点出发访遍图中的其余顶点，且使每一个顶点仅被访问一次。由于图中可能存在环，为了避免同一顶点被访问多次，在遍历图的过程中，必须记下每个已访问过的顶点。因此需要一个额外的数组记录是否访问了顶点，数组的长度为图的顶点数。通常有两条遍历图的路径：深度优先搜索和广度优先搜索。它们对无向图和有向图都适用。
 
 1. 深度优先搜索（Depth First Search, DFS）：又称回溯法，其采用了一种“一直向下走，走不通就掉头”的思想；类似于树的先根遍历，是树的先根遍历的推广。基本思路：从图的某个顶点V出发，访问此顶点；然后依次从V的未被访问的邻接点出发深度优先遍历图，直至图中所有和V有路径相通的顶点都被访问到；若此时图中尚有顶点未被访问到，则另选图中一个未曾被访问的顶点作起始点，重复上述过程，直至图中所有顶点都被访问到为止。在DFS遍历时会生成DFS树/DFS森林。
 
-2. 广度优先搜索（Breadth First Search, BFS）：类似于树的按层次遍历的过程。基本思路：从图中的某顶点V出发，在访问了V之后依次访问V的各个未曾访问过的邻接点；然后分别从这些邻接点出发依次访问它们的邻接点，并使“先被访问的顶点的邻接点”先于“后被访问的顶点的邻接点”被访问；直至图中所有已被访问的顶点的邻接点都被访问到。若此时图中尚有顶点未被访问，则另选图中一个未曾被访问的顶点作起始点，重复上述过程，直至图中所有顶点都被访问到为止。在BFS遍历生成的BFS树/BFS森林中，每个顶点和S点（起始点）之间那条通路（由树边组成的通路），恰好就是在原图中这两个顶点之间的最短通路。
+2. 广度优先搜索（Breadth First Search, BFS）：类似于树的按层次遍历。基本思路是从顶点V出发，按发现顺序依次访问各顶点尚未访问的邻接点；若图不连通，再从未访问顶点重新开始。对于无权图或所有边权相等的图，BFS树中从起点S到可达顶点的树路径具有最少边数；一般带权图不能据此得到最小权值路径。
 
-图遍历的过程实质上是通过边或弧查找其邻接点的过程。因此深度优先和广度优先遍历图的时间复杂的相同，两者的不同之处仅仅在于对顶点访问的顺序不同。时间复杂度均为O(n+e)。在遍历图时图的顶点状态分为{UNDISCOVERED, DISCOVERED, VISITED}，及顶点时间标签dTime（顶点被发现时刻）和fTime（顶点被访问完毕时刻）；顶点的活动期：active[u] = (dTime[u], fTime[u])。括号引理（parenthesis lemma）：给定有向图G = (V, E)及其任一DFS森林，则u是v的后代，iff active[u] ⊆ active[v]；u是v的祖先，iff active[u] ⊇ active[v]（即祖先的活动期必然包含后代的活动期）；u与v“无关”，iff active[u] ∩ active[v] = Ø（即若两个顶点没有任何直系血缘关系，则它们的活动期也是彼此互不相交的）。
-边状态分为{UNDETERMINED, TREE, CROSS, FORWARD, BACKWARD}；一但出现BACKWARD边意味着存在至少一条回路。
+图遍历的过程实质上是通过边或弧查找邻接点。使用邻接表时，DFS和BFS的时间复杂度均为O(n+e)；使用邻接矩阵时，即使边很少也需要检查矩阵项，时间复杂度为Θ(n²)。在遍历图时图的顶点状态分为{UNDISCOVERED, DISCOVERED, VISITED}，及顶点时间标签dTime（顶点被发现时刻）和fTime（顶点被访问完毕时刻）；顶点的活动期：active[u] = (dTime[u], fTime[u])。括号引理（parenthesis lemma）：给定有向图G = (V, E)及其任一DFS森林，则u是v的后代，iff active[u] ⊆ active[v]；u是v的祖先，iff active[u] ⊇ active[v]；u与v“无关”，iff active[u] ∩ active[v] = Ø。
+有向图DFS可将边分类为{TREE, CROSS, FORWARD, BACKWARD}；存在BACKWARD边当且仅当存在有向环。无向图中，遇到连接当前结点与非父祖先的非树边也表明存在环。
 
 ### 有向无环图
-有向无环图（directed acycline graph）:一个无环的有向图称为有向无环图，简称DAG图。
+有向无环图（directed acyclic graph）：一个无环的有向图称为有向无环图，简称DAG。
 * 拓扑排序（topological sort）：由某个集合上的偏序得到该集合上的一个全序，这个操作称之为拓扑排序。
 * AOV网：用顶点表示活动，用弧表示活动间的优先关系的有向图称为顶点表示活动的网（activity on vertex network），简称AOV网。
 * AOE网：与AOV网对应的是用边（弧）表示活动，顶点表示事件的带权的有向无环图称为边表示活动的网（activity on edge），简称AOE网。
 
 ### [最短路径](https://mp.weixin.qq.com/s?__biz=MzIxMjE5MTE1Nw==&mid=2653197626&idx=1&sn=fca7472af006a7f8890ee84ad7cf1116&chksm=8c99e7e0bbee6ef6faa1a34160a5e135503425e37552e90dfca2fbc10f223dbf3b875e84e418&scene=21#wechat_redirect)
 最短路径（shortest path）：一个顶点到另一个顶点的最短路径（路径上边的数目/路径上边的权值之和）。
-1. 单源最短路径：从某个源点到其余各顶点的最短路径。1）[Dijkstra算法](https://mp.weixin.qq.com/s?__biz=MzIxMjE5MTE1Nw==&mid=2653197794&idx=1&sn=8286ba52dd8e909197324148ffe6b7d7&chksm=8c99e738bbee6e2e16332dea4c5daef34dc2db6166149244c5406b1042c46d166e83e2e6f2df&scene=21#wechat_redirect)：又称SPF（shortest path first, 最短路径优先）算法；求不含有负权环图的单源最短路径。算法思想：设是一个带权有向图，把图中顶点集合V分成两组：第一组为已求出最短路径的顶点集合（用S表示，初始时S中只有一个源点，以后每求得一条最短路径，就将加入到集合S中，直到全部顶点都加入S中为止）；第二组为其余未确定最短路径的顶点集合（用U表示）。按最短路径长度的递增次序依次把第二组U中的顶点加入S中；在加入的过程中，总保持从源点到S中各顶点的最短路径长度不大于从源点到U中任何顶点的最短路径长度。从而求得从到图上其余各个顶点的最短路径是路径长度递增的序列。2）Bellman-Ford算法:求含负权图的单源最短路径。3）SPFA（shortest path faster algorithms）算法：求含有负权环的图单源最短路径算法。是在bellman-ford算法的基础上加上一个队列优化，减少了冗余的松弛操作。注：松弛操作（relaxation）：对于每个顶点，都设置一个属性d[v]，用来描述从源点s到v的最短路径权值的上界。一次松弛操作可以减少最短路径估计的值d[v]，并更新当前最短路径。
-2. [多源最短路径](https://mp.weixin.qq.com/s?__biz=MzIxMjE5MTE1Nw==&mid=2653197861&idx=1&sn=ed3140e711821206b5b50cd418614660&chksm=8c99e4ffbbee6de92ae00262ce1230bce3de384d3cadcf99c3f51aca4ca0c5f7f5a9f2e857df&scene=21#wechat_redirect)：每一对顶点之间的最短路径。Floyd算法：又称插点法；是一种动态规划算法，边权可正可负。算法思想：若（vi, ... ,vk）和（vk, ... vj）分别是从vi到vk和从vk到vj的中间顶点的序号不大于K-1的最短路径，则将（vi, ... ,vk, ... ,vj）和已经得到的从vi到vj且中间顶点序号不大于K-1的最短路径相比较，其长度较短者便是从vi到vj的中间顶点的序号不大于k的最短路径。这样比较n次后最后求得的必是从vi到vj的最短路径。
+1. 单源最短路径：从某个源点到其余各顶点的最短路径。Dijkstra算法要求所有可达边权非负。Bellman-Ford算法允许负权边，并可检测源点可达的负权环；若存在这种负权环，相关顶点没有有限最短路径。SPFA是Bellman-Ford的一种队列优化，仍不能为可达负权环给出有限最短路径，应检测并报告该情况。松弛操作（relaxation）通过边(u,v)尝试减小从源点到v的当前距离上界。
+2. 所有点对最短路径：求每一对顶点之间的最短路径。Floyd算法又称插点法，是一种动态规划算法，允许正权或负权边；要得到有限最短路径，相关路径上不能存在负权环。算法逐步允许编号不大于k的顶点作为中间点，并比较经过k与不经过k的两种路径长度。
