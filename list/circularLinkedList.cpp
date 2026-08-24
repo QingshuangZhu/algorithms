@@ -8,6 +8,9 @@
 
 /* 初始化 circular linked list */
 int initCList(cLinkedList *list) {    /* 注意参数是按值传递 */
+    if(NULL == list){
+        return 0;
+    }
     (*list) = (cLinkedList)malloc(sizeof(cLNode));    /* 产生头结点 */
     if(NULL == (*list)){
         return 0;
@@ -22,6 +25,9 @@ int initCList(cLinkedList *list) {    /* 注意参数是按值传递 */
 int destroyCList(cLinkedList *list) {
     if(NULL == list){
         return 0;
+    }
+    if(NULL == *list){
+        return 1;
     }
 
     cLinkedList head = (*list)->next;    /* list为表尾，head指向头结点 */
@@ -81,7 +87,7 @@ int cListLength(cLinkedList list) {
 /* 获得 circular linked list 在pos位置的值 */
 int cListGet(cLinkedList list, int pos, dataType *data) {
     /* 1 <= pos <= length */
-    if(pos > cListLength(list) || pos < 1){
+    if(NULL == list || NULL == data || pos > cListLength(list) || pos < 1){
         return 0;
     }
 
@@ -92,13 +98,14 @@ int cListGet(cLinkedList list, int pos, dataType *data) {
         head = head->next;
     }
     *data = head->data;
-    return index;
+    return 1;
 }
 
 /* 将结点插入在pos位置上 */
 int cListInsert(cLinkedList *list, int pos, dataType data) {
     /* 1 <= pos <= length+1 */
-    if(pos > cListLength(*list)+1 || pos < 1){
+    if(NULL == list || NULL == *list ||
+       pos > cListLength(*list)+1 || pos < 1){
         return 0;
     }
 
@@ -128,7 +135,8 @@ int cListInsert(cLinkedList *list, int pos, dataType data) {
 /* 删除第pos个结点 */
 int cListDelete(cLinkedList *list, int pos, dataType *data) {
     /* 1 <= pos <= length */
-    if(pos > cListLength(*list) || pos < 1){
+    if(NULL == list || NULL == *list || NULL == data ||
+       pos > cListLength(*list) || pos < 1){
         return 0;
     }
 
@@ -152,14 +160,38 @@ int cListDelete(cLinkedList *list, int pos, dataType *data) {
     return 1;
 }
 
+static int copyCListNodes(cLinkedList source, cLinkedList *result) {
+    cLinkedList sourceHead = source->next;
+    cLinkedList node = sourceHead->next;
+    while(node != sourceHead){
+        cLinkedList newNode = (cLinkedList)malloc(sizeof(cLNode));
+        if(NULL == newNode){
+            return 0;
+        }
+        newNode->data = node->data;
+        newNode->next = (*result)->next;
+        (*result)->next = newNode;
+        *result = newNode;
+        node = node->next;
+    }
+    return 1;
+}
+
 /* 将list1和list2连接：list1, list2, list3 分别为尾指针 */
 int cListAttach(cLinkedList list1, cLinkedList list2, cLinkedList *list3) {
-    cLinkedList head = list1->next;    /* head指向头结点 */
+    if(NULL == list1 || NULL == list2 || NULL == list3){
+        return 0;
+    }
 
-    list1->next = list2->next->next;    /* list2的第一个结点连接到到list1的末尾 */
-    free(list2->next);    /* 释放掉list2的头结点 */
-    list2->next = head;
-    *list3 = list2;    /* 新的尾指针 */
+    cLinkedList result = NULL;
+    if(!initCList(&result)){
+        return 0;
+    }
+    if(!copyCListNodes(list1, &result) || !copyCListNodes(list2, &result)){
+        destroyCList(&result);
+        return 0;
+    }
+    *list3 = result;
     return 1;
 }
 

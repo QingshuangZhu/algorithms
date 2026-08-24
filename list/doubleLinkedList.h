@@ -17,6 +17,12 @@ typedef struct duLNode {
     struct duLNode *prior;
     struct duLNode *next;
 } duLNode, *duLinkedList;
+/*
+ * The list has a sentinel node. Status functions return 1 on success and 0
+ * on failure. Positions are 1-based: get/delete use [1, length], and insert
+ * uses [1, length + 1]. Output pointers must be non-NULL. Destruction is
+ * safe to repeat and sets *list to NULL.
+ */
 int initDuList(duLinkedList *list);
 int destroyDuList(duLinkedList *list);
 int clearDuList(duLinkedList list);

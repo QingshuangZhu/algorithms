@@ -8,6 +8,9 @@
 
 /* 初始化 double linked list */
 int initDuList(duLinkedList *list) {
+    if(NULL == list){
+        return 0;
+    }
     *list = (duLinkedList)malloc(sizeof(duLNode));    /* 产生头结点 */
     if(NULL == *list){
         return 0;
@@ -22,6 +25,9 @@ int initDuList(duLinkedList *list) {
 int destroyDuList(duLinkedList *list) {
     if(NULL == list){
         return 0;
+    }
+    if(NULL == *list){
+        return 1;
     }
 
     duLinkedList tmp = (*list)->next;    /* 有头结点 */
@@ -83,7 +89,7 @@ int duListLength(duLinkedList list) {
 /* 获得 double linked list 在pos位置的值 */
 int duListGet(duLinkedList list, int pos, dataType *data) {
     /* 1 <= pos <= length */
-    if(pos > duListLength(list) || pos < 1){
+    if(NULL == list || NULL == data || pos > duListLength(list) || pos < 1){
         return 0;
     }
 
@@ -97,12 +103,12 @@ int duListGet(duLinkedList list, int pos, dataType *data) {
         }
         tmp = tmp->next;
     }
-    return index;
+    return 1;
 }
 
 /* 将结点插入在pos位置上 */
 int duListInsert(duLinkedList list, int pos, dataType data) {
-    if(NULL == list){
+    if(NULL == list || pos < 1){
         return 0;
     }
 
@@ -138,7 +144,7 @@ int duListInsert(duLinkedList list, int pos, dataType data) {
 
 /* 删除第pos个结点 */
 int duListDelete(duLinkedList list, int pos, dataType *data) {
-    if(NULL == list){
+    if(NULL == list || NULL == data || pos < 1){
         return 0;
     }
 
@@ -159,7 +165,9 @@ int duListDelete(duLinkedList list, int pos, dataType *data) {
     /* tmp 位于 pos-1 处 */
     duLinkedList tmp2 = tmp->next;
     tmp->next = tmp2->next;
-    tmp2->next->prior = tmp;
+    if(NULL != tmp2->next){
+        tmp2->next->prior = tmp;
+    }
     *data = tmp2->data;
     free(tmp2);
     tmp2 = NULL;

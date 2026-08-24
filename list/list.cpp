@@ -3,12 +3,33 @@
  */
 
 #include "list.h"
+#include <limits.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
+static int copyListNodes(linkedList source, linkedList *tail) {
+    linkedList node = source->next;
+    while(NULL != node){
+        linkedList newNode = (linkedList)malloc(sizeof(lNode));
+        if(NULL == newNode){
+            return 0;
+        }
+        newNode->data = node->data;
+        newNode->next = NULL;
+        (*tail)->next = newNode;
+        *tail = newNode;
+        node = node->next;
+    }
+    return 1;
+}
+
 /* 初始化list */
 int initList(linkedList *list) {
+    if(NULL == list){
+        return 0;
+    }
     *list = (linkedList)malloc(sizeof(lNode));    /* 产生头结点 */
     if(NULL == *list){
         return 0;
@@ -19,6 +40,9 @@ int initList(linkedList *list) {
 }
 
 int initList2(sqList *list) {
+    if(NULL == list){
+        return 0;
+    }
     list->base = (dataType*)malloc(LIST_INIT_SIZE * sizeof(dataType));
     if(NULL == list->base){
         return 0;
@@ -33,6 +57,9 @@ int initList2(sqList *list) {
 int destroyList(linkedList *list) {
     if(NULL == list){
         return 0;
+    }
+    if(NULL == *list){
+        return 1;
     }
 
     linkedList tmp = (*list)->next;    /* 有头结点 */
@@ -49,6 +76,9 @@ int destroyList(linkedList *list) {
 }
 
 int destroyList2(sqList *list) {
+    if(NULL == list){
+        return 0;
+    }
     if(NULL != list->base){
         free(list->base);
         list->base = NULL;
@@ -78,7 +108,12 @@ int clearList(linkedList list) {
 }
 
 void clearList2(sqList *list) {
-    memset(list->base, 0, list->size * sizeof(dataType));
+    if(NULL == list){
+        return;
+    }
+    if(NULL != list->base){
+        memset(list->base, 0, list->size * sizeof(dataType));
+    }
     list->length = 0;
 }
 
@@ -118,7 +153,7 @@ int listLength2(sqList list) {
 
 /* 获得list在pos位置的值 */
 int listGet(linkedList list, int pos, dataType *data) {
-    if(NULL == list){
+    if(NULL == list || NULL == data){
         return 0;
     }
 
@@ -137,12 +172,12 @@ int listGet(linkedList list, int pos, dataType *data) {
         }
         tmp = tmp->next;
     }
-    return index;
+    return 1;
 }
 
 int listGet2(sqList list, int pos, dataType *data) {
     /* 1 <= pos <= length */
-    if(pos > list.length || pos < 1){
+    if(NULL == data || NULL == list.base || pos > list.length || pos < 1){
         return 0;
     }
 
@@ -152,7 +187,7 @@ int listGet2(sqList list, int pos, dataType *data) {
 
 /* 将结点插入在pos位置上 */
 int listInsert(linkedList list, int pos, dataType data) {
-    if(NULL == list){
+    if(NULL == list || pos < 1){
         return 0;
     }
 
@@ -184,17 +219,27 @@ int listInsert(linkedList list, int pos, dataType data) {
 /* 将结点插入在pos位置上 */
 int listInsert2(sqList *list, int pos, dataType data) {
     /* 1 <= pos <= length+1 */
-    if(pos < 1 || pos > list->length+1){
+    if(NULL == list || NULL == list->base || pos < 1 ||
+       list->length < 0 || list->size < 0 || list->length > list->size ||
+       list->length == INT_MAX || pos - 1 > list->length){
         return 0;
     }
 
     if(list->length >= list->size){
-        dataType *newBase = (dataType*)realloc(list->base, (list->size+LIST_INCREMENT)*sizeof(dataType));
+        if(list->size > INT_MAX - LIST_INCREMENT){
+            return 0;
+        }
+        int newSize = list->size + LIST_INCREMENT;
+        if((size_t)newSize > SIZE_MAX/sizeof(dataType)){
+            return 0;
+        }
+        dataType *newBase = (dataType*)realloc(
+            list->base, (size_t)newSize*sizeof(dataType));
         if(NULL == newBase){
             return 0;
         }
         list->base = newBase;
-        list->size += LIST_INCREMENT;
+        list->size = newSize;
     }
 
     for(int i = list->length-1; i >= pos-1 && i >= 0; i--){
@@ -207,7 +252,7 @@ int listInsert2(sqList *list, int pos, dataType data) {
 
 /* 删除第pos个结点 */
 int listDelete(linkedList list, int pos, dataType *data) {
-    if(NULL == list){
+    if(NULL == list || NULL == data || pos < 1){
         return 0;
     }
 
@@ -235,8 +280,9 @@ int listDelete(linkedList list, int pos, dataType *data) {
 }
 
 int listDelete2(sqList *list, int pos, dataType *data) {
-    /* 1 <= pos <= length+1 */
-    if(pos < 1 || pos > list->length+1){
+    /* 1 <= pos <= length */
+    if(NULL == list || NULL == list->base || NULL == data ||
+       pos < 1 || pos > list->length){
         return 0;
     }
 
@@ -250,39 +296,55 @@ int listDelete2(sqList *list, int pos, dataType *data) {
 
 /* 将list1和list2连接 */
 int listAttach(linkedList list1, linkedList list2, linkedList *list3) {
-    if(NULL == list1 || NULL == list2){
+    if(NULL == list1 || NULL == list2 || NULL == list3){
         return 0;
     }
 
-    linkedList tmp = list1;   /* 有头结点 */
-    while(NULL != tmp->next){
-        tmp = tmp->next;
+    linkedList result = NULL;
+    if(!initList(&result)){
+        return 0;
     }
-    tmp->next = list2->next;
-    *list3 = list1;
+    linkedList tail = result;
+    if(!copyListNodes(list1, &tail) || !copyListNodes(list2, &tail)){
+        destroyList(&result);
+        return 0;
+    }
+    *list3 = result;
     return 1;
 }
 
 int listAttach2(sqList list1, sqList list2, sqList *list3) {
-    int totalLen = list1.length + list2.length;
-
-    if(totalLen > list3->size){
-        
-        dataType *newBase = (dataType*)realloc(list3->base, totalLen*sizeof(dataType));
-        if(NULL == newBase){
-            return 0;
-        }
-        list3->base = newBase;
-        list3->size = totalLen;
-    } 
-
-    for(int i = 0; i < totalLen; i++){
-        list3->base[i] = list1.base[i];
-        if(i >= list1.length){
-            list3->base[i] = list2.base[i-list1.length];
-        }
+    if(NULL == list3 || list1.length < 0 || list2.length < 0 ||
+       (list1.length > 0 && NULL == list1.base) ||
+       (list2.length > 0 && NULL == list2.base) ||
+       list1.length > INT_MAX - list2.length){
+        return 0;
     }
+
+    int totalLen = list1.length + list2.length;
+    if(0 == totalLen){
+        list3->length = 0;
+        return 1;
+    }
+    if((size_t)totalLen > SIZE_MAX / sizeof(dataType)){
+        return 0;
+    }
+    dataType *newBase = NULL;
+    newBase = (dataType*)malloc((size_t)totalLen * sizeof(dataType));
+    if(NULL == newBase){
+        return 0;
+    }
+    for(int i = 0; i < list1.length; i++){
+        newBase[i] = list1.base[i];
+    }
+    for(int i = 0; i < list2.length; i++){
+        newBase[list1.length + i] = list2.base[i];
+    }
+
+    free(list3->base);
+    list3->base = newBase;
     list3->length = totalLen;
+    list3->size = totalLen;
     return 1;
 }
 
@@ -337,73 +399,46 @@ void listTraverse2(sqList list) {
 }
 
 /* 一趟归并排序 */
-linkedList merge(linkedList left, linkedList right) {
-    linkedList lr = NULL;
-    linkedList freeHead = NULL;     /* free头结点 */
-    if(listEmpty(left)){
-        return right;
-    }
-    if(listEmpty(right)){
-        return left;
-    }
-    if(left->next->data < right->next->data){
-        lr = left;
-        freeHead = right;
-    }else{
-        lr = right;
-        freeHead = left;
-    }
-    linkedList tmp = lr;
-    left = left->next;
-    right = right->next;
-    tmp->next = NULL;
+static linkedList merge(linkedList left, linkedList right) {
+    lNode head = {0, NULL};
+    linkedList tail = &head;
 
-    while(left && right){
-        if(left->data < right->data){
-            tmp->next = left;
+    while(NULL != left && NULL != right){
+        if(left->data <= right->data){
+            tail->next = left;
             left = left->next;
-            tmp = tmp->next;
-            tmp->next = NULL;
         }else{
-            tmp->next = right;
+            tail->next = right;
             right = right->next;
-            tmp = tmp->next;
-            tmp->next = NULL;
         }
+        tail = tail->next;
+    }
+    tail->next = (NULL != left) ? left : right;
+    return head.next;
+}
+
+static linkedList sortNodes(linkedList first) {
+    if(NULL == first || NULL == first->next){
+        return first;
     }
 
-    if(NULL != left){
-        tmp->next = left;
-    }
-    if(NULL != right){
-        tmp->next = right;
+    linkedList slow = first;
+    linkedList fast = first->next;
+    while(NULL != fast && NULL != fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
     }
 
-    free(freeHead);
-    return lr;
+    linkedList right = slow->next;
+    slow->next = NULL;
+    return merge(sortNodes(first), sortNodes(right));
 }
 
 /* 链表排序 */
 linkedList listSort(linkedList list) {
-    if(listEmpty(list)){
+    if(NULL == list){
         return NULL;
     }
-    if(NULL == list->next->next){
-        return list;
-    }
-
-    linkedList slow = list;
-    linkedList fast = list;
-    while(NULL != fast && NULL != fast->next){
-        fast = fast->next->next;
-        slow = slow->next;
-    }
-
-    linkedList head = (linkedList)malloc(sizeof(lNode));   /* 添加头节点 */
-    head->next = slow->next;
-    slow->next = NULL;                                     /* 在slow结点处拆分为两个链表 */
-    linkedList left = listSort(list);
-    linkedList right = listSort(head);
-    linkedList lr = merge(left, right);
-    return lr;
+    list->next = sortNodes(list->next);
+    return list;
 }
