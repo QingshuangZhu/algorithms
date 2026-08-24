@@ -8,22 +8,46 @@
 #include <stack>
 #include <queue>
 
+static void destroyCreatedBiTree(linkedBiTree t) {
+    if(NULL == t){
+        return;
+    }
+
+    destroyCreatedBiTree(t->lChild);
+    destroyCreatedBiTree(t->rChild);
+    free(t);
+}
+
 /* 构造 binary tree */
 int createBiTree(linkedBiTree *t) {
-    /* 按先序次序构造binary tree */
-    dataType data;
-    scanf("%c", &data);
-    if('#' == data){    /* #字符表示空树 */
-        *t = NULL;
-    }else{
-        *t = (linkedBiTree)malloc(sizeof(biTNode));    /* 生成根结点 */
-        if(NULL == *t){
-            return 0;
-        }
-        (*t)->data = data;
-        createBiTree(&(*t)->lChild);                  /* 构造左子树 */
-        createBiTree(&(*t)->rChild);                  /* 构造右子树 */
+    if(NULL == t){
+        return 0;
     }
+    *t = NULL;
+
+    /* 按先序次序构造binary tree */
+    biTreeDataType data;
+    if(1 != scanf("%c", &data)){
+        return 0;
+    }
+    if('#' == data){    /* #字符表示空树 */
+        return 1;
+    }
+
+    linkedBiTree node = (linkedBiTree)malloc(sizeof(biTNode));    /* 生成根结点 */
+    if(NULL == node){
+        return 0;
+    }
+    node->data = data;
+    node->lChild = NULL;
+    node->rChild = NULL;
+
+    if(!createBiTree(&node->lChild) || !createBiTree(&node->rChild)){
+        destroyCreatedBiTree(node);
+        return 0;
+    }
+
+    *t = node;
     return 1;
 }
 
@@ -70,6 +94,10 @@ void biTreeReverse(linkedBiTree t) {
 
 /* 反转二叉树的非递归实现 */
 void biTreeReverse2(linkedBiTree t) {
+    if(NULL == t){
+        return;
+    }
+
     std::stack<linkedBiTree> s;
     s.push(t);
 
@@ -155,6 +183,10 @@ void postOrderTraverse(linkedBiTree t) {
 
 /* 后序遍历的非递归实现 */
 void postOrderTraverse2(linkedBiTree t) {
+    if(NULL == t){
+        return;
+    }
+
     std::stack<linkedBiTree> s;
     linkedBiTree cur = NULL;
     linkedBiTree pre = NULL;

@@ -9,30 +9,26 @@
 extern "C" {
 #endif
 
-typedef char dataType;
+typedef char biTreeDataType;
 
 /* linked storage structure */
 typedef struct biTNode {
-    dataType data;
+    biTreeDataType data;
     struct biTNode *lChild;
     struct biTNode *rChild;
 } biTNode, *linkedBiTree;
 
-int initBiTree(linkedBiTree *t);
-int destroyBiTree(linkedBiTree t);
+/*
+ * Read a preorder representation from stdin, using '#' for an empty node.
+ * The output pointer must not already own a tree. On input or allocation
+ * failure, return 0, release any partial tree, and set *t to NULL. On success,
+ * the caller owns all returned nodes. This repository provides no public
+ * destroy helper; the caller must release every node with free(), normally
+ * by a postorder traversal.
+ */
 int createBiTree(linkedBiTree *t);
-int clearBiTree(linkedBiTree t);
-int biTreeEmpty(linkedBiTree t);
-biTNode* root(linkedBiTree t);
-int value(linkedBiTree t, biTNode *node);
-int assign(linkedBiTree t, biTNode *node, dataType data);
-biTNode* parent(linkedBiTree t, biTNode *node);
-biTNode* leftChild(linkedBiTree t, biTNode *node);
-biTNode* rightChild(linkedBiTree t, biTNode *node);
-biTNode* leftSibling(linkedBiTree t, biTNode *node);
-biTNode* rightSibling(linkedBiTree t, biTNode *node);
-int insertChild(linkedBiTree t, biTNode *node, int lr, linkedBiTree child);
-int deleteChild(linkedBiTree t, biTNode *node, int lr);
+
+/* Other binary-tree ADT operation names are notes-only; see tree.md. */
 
 int biTreeDepth(linkedBiTree t);
 int biTreeLeaf(linkedBiTree t);

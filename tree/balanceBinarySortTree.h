@@ -19,6 +19,11 @@ typedef struct bBSTNode {
     struct bBSTNode *rChild;
 } bBSTNode, *bBSTNodeTree;
 
+/*
+ * Perform structural rotations without updating any node's bf field.
+ * rRotate is a no-op without a root and left child; lRotate is a no-op
+ * without a root and right child.
+ */
 void rRotate(bBSTNodeTree *p);
 void lRotate(bBSTNodeTree *p);
 

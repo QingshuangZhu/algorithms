@@ -6,7 +6,7 @@
 
 /* 向上调整 */
 void upAdjust(int array[], int length, int index) {
-    if(index > length - 1 || index < 1){
+    if(!array || length <= 0 || index < 1 || index >= length){
         return;
     }
     int parentIndex = (index - 1)/2;
@@ -21,9 +21,13 @@ void upAdjust(int array[], int length, int index) {
 
 /* 向下调整 */
 void downAdjust(int array[], int length, int index) {
+    if(!array || length <= 0 || index < 0 || index >= length){
+        return;
+    }
+
     int tmp = array[index];    /* 父结点的值 */
-    int childIndex = 2*index + 1;
-    while(childIndex < length) {
+    while(index < length/2) {
+        int childIndex = 2*index + 1;
         /* 如果有右孩子，且右孩子小于左孩子的值，则定位到右孩子 */
         if(childIndex + 1 < length && array[childIndex+1] < array[childIndex]){
             childIndex++;
@@ -35,13 +39,16 @@ void downAdjust(int array[], int length, int index) {
 
         array[index] = array[childIndex];
         index = childIndex;
-        childIndex = 2*index + 1;
     }
     array[index] = tmp;
 }
 
 /* 构建堆 */
 void buildHeap(int array[], int length) {
+    if(!array || length <= 1){
+        return;
+    }
+
     /* 从最后一个非叶子结点开始，向下调整 */
     for(int i = (length - 2)/2; i >=0; i--){
         downAdjust(array, length, i);
